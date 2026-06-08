@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator
 from .models import JobApplication
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, authenticate, logout
@@ -17,14 +18,25 @@ def dashboard(request):
 
     if search:
         jobs = jobs.filter(company__icontains=search)
+
+    
+        # -------------------------
+    # PAGINATION ADDED HERE
+    # -------------------------
+    paginator = Paginator(jobs, 5)  # 5 jobs per page
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
     
     context = {
-        'jobs': jobs,
+        'jobs': page_obj,  # IMPORTANT: replace jobs with page_obj
+        'page_obj': page_obj,
+
         'total': jobs.count(),
         'applied': JobApplication.objects.filter(user=request.user, status='applied').count(),
         'interview': JobApplication.objects.filter(user=request.user, status='interview').count(),
         'offer': JobApplication.objects.filter(user=request.user, status='offer').count(),
         'rejected': JobApplication.objects.filter(user=request.user, status='rejected').count(),
+        
         'selected_status': status,
         'search': search,
     }
