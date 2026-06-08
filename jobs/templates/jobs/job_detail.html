@@ -1,0 +1,53 @@
+{% extends 'jobs/base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card mt-4">
+            <div class="card-body">
+                <h2 class="card-title mb-4">
+                    {{ job.company }}
+                </h2>
+
+                <p>
+                    <strong>Role:</strong>
+                    {{ job.role }}
+                </p>
+
+                <p>
+                    <strong>Status:</strong>
+                    {{ job.status }}
+                </p>
+
+                <p>
+                    <strong>Notes:</strong>
+                    {{ job.notes }}
+                </p>
+
+                <p>
+                    <strong>Applied Date:</strong>
+                    {{ job.date_applied  }}
+                </p>
+
+                <div class="mt-4">
+                    <a href="{% url 'edit_job' job.id %}"
+                       class="btn btn-warning">
+                        Edit
+                    </a>
+
+                    <a href="{% url 'delete_job' job.id %}"
+                       class="btn btn-danger">
+                        Delete
+                    </a>
+
+                    <a href="{% url 'dashboard' %}"
+                       class="btn btn-secondary">
+                        Back to Dashboard
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

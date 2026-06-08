@@ -13,6 +13,11 @@ def dashboard(request):
     if status:
         jobs = jobs.filter(status=status)
     
+    search = request.GET.get('search', '')
+
+    if search:
+        jobs = jobs.filter(company__icontains=search)
+    
     context = {
         'jobs': jobs,
         'total': jobs.count(),
@@ -21,8 +26,18 @@ def dashboard(request):
         'offer': JobApplication.objects.filter(user=request.user, status='offer').count(),
         'rejected': JobApplication.objects.filter(user=request.user, status='rejected').count(),
         'selected_status': status,
+        'search': search,
     }
     return render(request, 'jobs/dashboard.html', context)
+
+@login_required(login_url='login')
+def jobdetail(request, job_id):
+    job = get_object_or_404(JobApplication, id=job_id, user=request.user)
+    
+    context = {
+            'job': job,
+    }
+    return render(request, 'jobs/job_detail.html', context)
 
 @login_required(login_url='login')
 def add_job(request):

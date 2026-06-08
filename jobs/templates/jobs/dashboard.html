@@ -1,94 +1,138 @@
 {% extends 'jobs/base.html' %}
 
 {% block content %}
+
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>My Job Applications</h2>
-    <a href="{% url 'add_job' %}">+ Add Job</a>
+    <a href="{% url 'add_job' %}" class="btn btn-success">
+        + Add Job
+    </a>
 </div>
 
-<div class="row mb-4">
+<form method="GET" class="mb-4">
+    <input type="hidden" name="status" value="{{ selected_status  }}">
 
-    <div class="col-md-2">
-        <a href="?" class="text-decoration-none">
+<div class="input-group">
+    <input
+        type="text"
+        name="search"
+        class="form-control"
+        placeholder="Search by company..."
+        value="{{ search }}"
+    >
+
+    <button type="submit" class="btn btn-primary">
+        Search
+    </button>
+</div>
+</form>
+
+<div class="row mb-4">
+<div class="col-md-2">
+    <a href="?search={{ search }}" class="text-decoration-none">
         <div class="card text-center bg-secondary text-white {% if not selected_status %}border border-3 border-dark{% endif %}">
             <div class="card-body">
                 <h5>Total</h5>
-                <h2>{{ total }}</h2>
+                <h3>{{ total }}</h3>
             </div>
         </div>
-        </a>
-    </div>
+    </a>
+</div>
 
-    <div class="col-md-2">
-        <a href="?status=applied" class="text-decoration-none">
+<div class="col-md-2">
+    <a href="?status=applied&search={{ search }}" class="text-decoration-none">
         <div class="card text-center bg-primary text-white {% if selected_status == 'applied' %}border border-3 border-dark{% endif %}">
             <div class="card-body">
                 <h5>Applied</h5>
-                <h2>{{ applied }}</h2>
+                <h3>{{ applied }}</h3>
             </div>
         </div>
-        </a>
-    </div>
-    <div class="col-md-2">
-        <a href="?status=interview" class="text-decoration-none">
-        <div class="card text-center bg-warning text-white {% if selected_status == 'interview' %}border border-3 border-dark{% endif %}">
-            <div class="card-body">
-                <h5>Interviewed</h5>
-                <h2>{{ interview }}</h2>
-            </div>
-        </div>
-        </a>
-    </div>
+    </a>
+</div>
 
-    <div class="col-md-2">
-        <a href="?status=offer" class="text-decoration-none">
+<div class="col-md-2">
+    <a href="?status=interview&search={{ search }}" class="text-decoration-none">
+            <div class="card text-center bg-warning text-white {% if selected_status == 'interview' %}border border-3 border-dark{% endif %}">
+                <div class="card-body">
+                <h5>Interview</h5>
+                <h3>{{ interview }}</h3>
+            </div>
+        </div>
+    </a>
+</div>
+
+<div class="col-md-2">
+    <a href="?status=offer&search={{ search }}" class="text-decoration-none">
         <div class="card text-center bg-success text-white {% if selected_status == 'offer' %}border border-3 border-dark{% endif %}">
             <div class="card-body">
                 <h5>Offer</h5>
-                <h2>{{ offer }}</h2>
+                <h3>{{ offer }}</h3>
             </div>
         </div>
-        </a>
-    </div>
+    </a>
+</div>
 
-    <div class="col-md-2">
-        <a href="?status=rejected" class="text-decoration-none">
+<div class="col-md-2">
+    <a href="?status=rejected&search={{ search }}" class="text-decoration-none">
         <div class="card text-center bg-danger text-white {% if selected_status == 'rejected' %}border border-3 border-dark{% endif %}">
             <div class="card-body">
                 <h5>Rejected</h5>
-                <h2>{{ rejected }}</h2>
+                <h3>{{ rejected }}</h3>
             </div>
         </div>
-        </a>
-    </div>
+    </a>
+</div>
 
 </div>
 
 {% if jobs %}
-<table class="table table-bordered table-hover">
+
+<table class="table table-bordered table-striped">
     <thead class="table-dark">
         <tr>
             <th>Company</th>
             <th>Role</th>
             <th>Status</th>
             <th>Date Applied</th>
+            <th>Actions</th>
         </tr>
     </thead>
-    <tbody>
-        {% for job in jobs %}
-        <tr>
-            <td>{{ job.company }}</td>
-            <td>{{ job.role }}</td>
-            <td>{{ job.status }}</td>
-            <td>{{ job.date_applied }}</td>
-            <td><a href="{% url 'delete_job' job.id %}">Delete</a></td>
-            <td><a href="{% url 'edit_job' job.id %}">Edit</a></td>
-        </tr>
-        {% endfor %}
-    </tbody>
+<tbody>
+    {% for job in jobs %}
+    <tr>
+        <td>{{ job.company }}</td>
+        <td>{{ job.role }}</td>
+        <td>{{ job.status }}</td>
+        <td>{{ job.date_applied }}</td>
+
+        <td>
+            <a href="{% url 'jobdetail' job.id %}"
+               class="btn btn-info btn-sm">
+                View
+            </a>
+
+            <a href="{% url 'edit_job' job.id %}"
+               class="btn btn-warning btn-sm">
+                Edit
+            </a>
+
+            <a href="{% url 'delete_job' job.id %}"
+               class="btn btn-danger btn-sm">
+                Delete
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+</tbody>
+
 </table>
+
 {% else %}
-<p class="text-muted">No job applications yet. Add your first one!</p>
+
+<div class="alert alert-info">
+    No job applications found.
+</div>
+
 {% endif %}
 
 {% endblock %}
