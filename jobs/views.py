@@ -6,6 +6,12 @@ from django.contrib.auth.decorators import login_required
 from .forms import JobApplicationForm
 from django.shortcuts import render, redirect, get_object_or_404
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from .serializers import JobApplicationSerializer
+
 @login_required(login_url='login')
 def dashboard(request):
     jobs = JobApplication.objects.filter(user=request.user)
@@ -36,7 +42,7 @@ def dashboard(request):
         'interview': JobApplication.objects.filter(user=request.user, status='interview').count(),
         'offer': JobApplication.objects.filter(user=request.user, status='offer').count(),
         'rejected': JobApplication.objects.filter(user=request.user, status='rejected').count(),
-        
+
         'selected_status': status,
         'search': search,
     }
@@ -109,3 +115,44 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('login')
+
+
+class JobListAPI(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        jobs = JobApplication.objects.filter(user=request.user)
+        serializer = JobApplicationSerializer(jobs, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = JobApplicationSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class JobDetailAPI(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self, job_id, user):
+        return get_object_or_404(JobApplication, id=job_id, user=user)
+
+    def get(self, request, job_id):
+        job = self.get_object(job_id, request.user)
+        serializer = JobApplicationSerializer(job)
+        return Response(serializer.data)
+
+    def put(self, request, job_id):
+        job = self.get_object(job_id, request.user)
+        serializer = JobApplicationSerializer(job, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, job_id):
+        job = self.get_object(job_id, request.user)
+        job.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
