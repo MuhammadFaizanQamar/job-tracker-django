@@ -6,6 +6,64 @@
     <a href="{% url 'add_job' %}">+ Add Job</a>
 </div>
 
+<div class="row mb-4">
+
+    <div class="col-md-2">
+        <a href="?" class="text-decoration-none">
+        <div class="card text-center bg-secondary text-white {% if not selected_status %}border border-3 border-dark{% endif %}">
+            <div class="card-body">
+                <h5>Total</h5>
+                <h2>{{ total }}</h2>
+            </div>
+        </div>
+        </a>
+    </div>
+
+    <div class="col-md-2">
+        <a href="?status=applied" class="text-decoration-none">
+        <div class="card text-center bg-primary text-white {% if selected_status == 'applied' %}border border-3 border-dark{% endif %}">
+            <div class="card-body">
+                <h5>Applied</h5>
+                <h2>{{ applied }}</h2>
+            </div>
+        </div>
+        </a>
+    </div>
+    <div class="col-md-2">
+        <a href="?status=interview" class="text-decoration-none">
+        <div class="card text-center bg-warning text-white {% if selected_status == 'interview' %}border border-3 border-dark{% endif %}">
+            <div class="card-body">
+                <h5>Interviewed</h5>
+                <h2>{{ interview }}</h2>
+            </div>
+        </div>
+        </a>
+    </div>
+
+    <div class="col-md-2">
+        <a href="?status=offer" class="text-decoration-none">
+        <div class="card text-center bg-success text-white {% if selected_status == 'offer' %}border border-3 border-dark{% endif %}">
+            <div class="card-body">
+                <h5>Offer</h5>
+                <h2>{{ offer }}</h2>
+            </div>
+        </div>
+        </a>
+    </div>
+
+    <div class="col-md-2">
+        <a href="?status=rejected" class="text-decoration-none">
+        <div class="card text-center bg-danger text-white {% if selected_status == 'rejected' %}border border-3 border-dark{% endif %}">
+            <div class="card-body">
+                <h5>Rejected</h5>
+                <h2>{{ rejected }}</h2>
+            </div>
+        </div>
+        </a>
+    </div>
+
+</div>
+
 {% if jobs %}
 <table class="table table-bordered table-hover">
     <thead class="table-dark">

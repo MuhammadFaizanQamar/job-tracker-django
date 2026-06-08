@@ -8,8 +8,19 @@ from django.shortcuts import render, redirect, get_object_or_404
 @login_required(login_url='login')
 def dashboard(request):
     jobs = JobApplication.objects.filter(user=request.user)
+    
+    status = request.GET.get('status', '')
+    if status:
+        jobs = jobs.filter(status=status)
+    
     context = {
-        'jobs': jobs
+        'jobs': jobs,
+        'total': jobs.count(),
+        'applied': JobApplication.objects.filter(user=request.user, status='applied').count(),
+        'interview': JobApplication.objects.filter(user=request.user, status='interview').count(),
+        'offer': JobApplication.objects.filter(user=request.user, status='offer').count(),
+        'rejected': JobApplication.objects.filter(user=request.user, status='rejected').count(),
+        'selected_status': status,
     }
     return render(request, 'jobs/dashboard.html', context)
 
